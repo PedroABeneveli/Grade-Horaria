@@ -93,6 +93,7 @@ def print_materias(horario):
     print() # faz a quebra de linha, pq o end= padrao eh \n
 
 def decodificar(horarios, codigo):
+    erro = False
     lista_horarios = [] # lista em que em um indice tera a hora, e no outro tera uma lista com dias e codigo
     for hora in horarios:
         indice = 0
@@ -103,6 +104,10 @@ def decodificar(horarios, codigo):
             dias.sort() # pra regularizar todos os casos pra remover por igualdade depois
             horario = list(hora[indice + 1:]) # depois do M
             for hor in horario:
+                # os parametros numericos dependem do horario
+                if not (hor.isdigit() and int(hor) > 0 and int(hor) <= 5):
+                    erro = True
+                    break
                 if ('M' + hor) not in lista_horarios: # se o horario n esta na lista
                     lista_horarios.append('M' + hor)
                     lista_horarios.append([dias, codigo])
@@ -120,6 +125,9 @@ def decodificar(horarios, codigo):
             dias.sort() # pra regularizar todos os casos pra remover por igualdade depois
             horario = list(hora[indice + 1:]) # depois do T
             for hor in horario:
+                if not (hor.isdigit() and int(hor) > 0 and int(hor) <= 6):
+                    erro = True
+                    break
                 if ('T' + hor) not in lista_horarios:
                     lista_horarios.append('T' + hor)
                     lista_horarios.append([dias, codigo])
@@ -137,6 +145,9 @@ def decodificar(horarios, codigo):
             dias.sort() # pra regularizar todos os casos pra remover por igualdade depois
             horario = list(hora[indice + 1:]) # depois do N
             for hor in horario:
+                if not (hor.isdigit() and int(hor) > 0 and int(hor) <= 4):
+                    erro = True
+                    break
                 if ('N' + hor) not in lista_horarios:
                     lista_horarios.append('N' + hor)
                     lista_horarios.append([dias, codigo])
@@ -147,7 +158,9 @@ def decodificar(horarios, codigo):
                         datas.append(dia)
                     datas.sort() # pra regularizar todos os casos pra remover por igualdade depois
                     lista_horarios[index + 1][0] = list(datas)
-    return lista_horarios
+        else:
+            erro = True
+    return lista_horarios, erro
 
 comando = input()
 dic_horarios = {} # dicionario onde chave = horario (ex: M5, 5° horario da manha), e os valores = lista de listas onde o primeiro elemento eh uma lista com os dias, e o segundo eh o codigo da materia
@@ -157,7 +170,7 @@ while comando != 'Hasta la vista, beibe!':
     else:
         erro = False # flag pra controlar se o comando sera invalido para mostrar depois
         operacao, codigo, *horarios = comando.split() # todos os comandos sao nesse formato
-        horas = decodificar(horarios, codigo) # decodifico antes de ver a operacao pq as duas vao precisar de uma lista que eu consiga comparar com os valores do dicionario
+        horas, erro = decodificar(horarios, codigo) # decodifico antes de ver a operacao pq as duas vao precisar de uma lista que eu consiga comparar com os valores do dicionario, e vê se teve algum erro
         # e a lista tbm esta organizada em pares [horario, [dias, codigo]]
         if operacao == '+':
             indice = 0
