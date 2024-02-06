@@ -172,7 +172,7 @@ while comando != 'Hasta la vista, beibe!':
         operacao, codigo, *horarios = comando.split() # todos os comandos sao nesse formato
         horas, erro = decodificar(horarios, codigo) # decodifico antes de ver a operacao pq as duas vao precisar de uma lista que eu consiga comparar com os valores do dicionario, e vê se teve algum erro
         # e a lista tbm esta organizada em pares [horario, [dias, codigo]]
-        if operacao == '+':
+        if operacao == '+' and len(horarios) != 0:
             indice = 0
             while indice < len(horas) and not erro: # pra verificar todos os pares da lista do decodificar()
                 if horas[indice] in dic_horarios: # se o horario ja esta guardado, precisa verificar se os dia batem
@@ -192,7 +192,7 @@ while comando != 'Hasta la vista, beibe!':
                     else: # se tem, so adiciona os dias e codigo a lista que ja existe
                         dic_horarios[horas[indice]].append(horas[indice + 1])
                     indice += 2 # pra verificar os pares da lista
-        else: # operacao -
+        elif operacao == '-' and len(horarios) != 0: # operacao -
             indice = 0
             while indice < len(horas) and not erro: # pra ver se existe a materia nos horarios e dias dados
                 if horas[indice] not in dic_horarios: 
@@ -216,6 +216,14 @@ while comando != 'Hasta la vista, beibe!':
                 while indice < len(horas): # remove do horario os dias e codigo exatos que estao naquela lista
                     dic_horarios[horas[indice]].remove(horas[indice + 1])
                     indice += 2
+        elif len(horarios) == 0:
+            print("Nao foram fornecidos horarios: ", end="")
+            erro = True
+        else:
+            print("Nenhum comando fornecido: ", end="")
+            erro = True
+        
         if erro:
             print(f'!({comando})')
+
     comando = input() # recebe outro comando e evita um loop infinito
